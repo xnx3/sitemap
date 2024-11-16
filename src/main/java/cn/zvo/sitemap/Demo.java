@@ -1,17 +1,12 @@
 package cn.zvo.sitemap;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.xnx3.Log;
-
 public class Demo {
 	public static void main(String[] args) {
 		Spider spider = new Spider();
-		spider.setThreadNumber(20);
-		spider.setDepth(20);
-		spider.setTimeout(10);
-		
+		spider.setThreadNumber(20); //开启20个抓取线程
+		spider.setDepth(2);			//目录深度是2
+		spider.setTimeout(10);		//超时时间是 10 秒
+		//日志输出
 		spider.setSpiderInterface(new SpiderInterface() {
 			public void end(Spider spider) {
 				/*
@@ -25,15 +20,14 @@ public class Demo {
 				 * spider.timeout http请求超时的时间，如果不设置默认是6，单位是秒
 				 * spider.ignoreQueryParam 是否忽略网址中携带的get等查询参数，默认是false，不忽略。 如果是true忽略，那么像是 http://www.zvo.cn/a/b.php?a=1&b=2 会被记录为是 http://www.zvo.cn/a/b.php
 				 */
+				System.out.println("获取到url数量："+spider.urls.size());
 				System.out.println(spider.urls);
 			}
 			public void spiderAfter(String url, int depth,String threadName, Spider spider) {
 				System.out.println("当前执行到： "+url+"\t深度:"+depth+"\t"+spider.delayRequestUrlMap.size()+"/"+(spider.requestUrlMap.size()+spider.delayRequestUrlMap.size()));
 			}
 		});
-		
+		//启动，开始抓取
 		spider.start("https://gitee.com/");
-		
-		
 	}
 }
