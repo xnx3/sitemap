@@ -2,9 +2,12 @@ package cn.zvo.sitemap;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,6 +15,7 @@ import org.jsoup.select.Elements;
 
 import com.xnx3.BaseVO;
 import com.xnx3.DateUtil;
+import com.xnx3.Lang;
 import com.xnx3.Log;
 import com.xnx3.StringUtil;
 import com.xnx3.UrlUtil;
@@ -62,6 +66,7 @@ public class Spider {
 	 */
 	public List<String> urls = new ArrayList<String>();
 	
+	
 	/**
 	 * 向要生成的sitemap.xml中追加一个url
 	 * @param url 传入如 http://xxxxx.com/a.html
@@ -70,11 +75,16 @@ public class Spider {
 		if(url == null || url.length() < 1) {
 			return;
 		}
+		if(UrlUtil.isStaticFile(url)) {
+			//Log.info("is static "+url);
+			return;
+		}
 		if(urlMap.get(url) == null) {
 			urlMap.put(url, "1");
 			urls.add(url);
 		}
 	}
+	
 	
 	
 	/**
@@ -225,10 +235,12 @@ public class Spider {
 			this.setExecuteInterface(new DefaultExecuteInterfaceImpl());
 		}
 		if(this.name == null) {
-			this.name = StringUtil.intTo62(DateUtil.timeForUnix10());
+			String nameStr = StringUtil.intTo62(DateUtil.timeForUnix10());
+			nameStr = nameStr.substring(4, nameStr.length())+StringUtil.getRandom09AZ(3);
+			this.name = nameStr;
 		}
 		
-		if(urls.size() >= 1) {
+		if(urls.size() >= 0) {
 			for (int i = 0; i < urls.size(); i++) {
 				delayRequestUrlMap.put(urls.get(i), 1);
 			}

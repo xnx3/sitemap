@@ -20,6 +20,13 @@ public class DefaultExecuteInterfaceImpl implements ExecuteInterface{
 
 	@Override
 	public void execute(String url,int depth, String threadName, Spider spider) {
+		if(UrlUtil.isStaticFile(url)) {
+			//静态资源文件将不分析
+			return;
+		}
+		
+		spider.addUrl(url);
+		
 		List<String> pageList = getPageAHref(url, spider);
 		for(int i = 0; i < pageList.size(); i++) {
         	String pageUrl = pageList.get(i);
@@ -32,7 +39,12 @@ public class DefaultExecuteInterfaceImpl implements ExecuteInterface{
         	
         	if(spider.requestUrlMap.get(pageUrl) == null && spider.delayRequestUrlMap.get(pageUrl) == null) {
         		//没有获取过源码分析，那么进行分析
-        		spider.delayRequestUrlMap.put(pageUrl, depth+1);
+        		if(UrlUtil.isStaticFile(pageUrl)) {
+        			//静态资源文件将不分析
+        		}else {
+        			//Log.info("depay request - "+pageUrl);
+        			spider.delayRequestUrlMap.put(pageUrl, depth+1);
+        		}
         	}
         }
 	}
